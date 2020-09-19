@@ -155,7 +155,11 @@ float Navigation::Run1DTOC(float x_now,
 }
 
 void Navigation::Run() {
-  drive_msg_.curvature = 1.0;
+    
+  visualization::ClearVisualizationMsg(local_viz_msg_);
+  visualization::DrawCross(Vector2f(2, 0), 0.2, 0xFF0000, local_viz_msg_);
+  viz_pub_.publish(local_viz_msg_);
+
   /*
   // move it to head file
   float free_path_length = 30.0;
@@ -168,6 +172,7 @@ void Navigation::Run() {
   const float speed = 1.0;
   const float dist_left = max<float>(0.0f, free_path_length - obstacle_margin);
   */
+  drive_msg_.curvature = 1.0;
   drive_msg_.velocity = 10.0f; // Run1DTOC(0, dist_left, speed, max_speed, max_accel, max_decel, dt);
   drive_pub_.publish(drive_msg_);
   // Create Helper functions here
