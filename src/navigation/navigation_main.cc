@@ -67,6 +67,8 @@ DEFINE_string(init_topic,
               "initialpose",
               "Name of ROS topic for initialization");
 DEFINE_string(map, "maps/GDC1.txt", "Name of vector map file");
+DEFINE_double(curv, 0.0, "angle of curvature from -1 to 1");
+DEFINE_double(dist, 1, "distance in meters to navigate");
 
 bool run_ = true;
 sensor_msgs::LaserScan last_laser_msg_;
@@ -128,7 +130,8 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "navigation", ros::init_options::NoSigintHandler);
   ros::NodeHandle n;
-  navigation_ = new Navigation(FLAGS_map, &n);
+  navigation_ = new Navigation(FLAGS_map, FLAGS_dist, FLAGS_curv, &n);
+  // navigation_ = new Navigation(FLAGS_map, &n);
 
   ros::Subscriber velocity_sub =
       n.subscribe(FLAGS_odom_topic, 1, &OdometryCallback);
@@ -139,6 +142,7 @@ int main(int argc, char** argv) {
   ros::Subscriber goto_sub =
       n.subscribe("/move_base_simple/goal", 1, &GoToCallback);
 
+  
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {
     ros::spinOnce();
