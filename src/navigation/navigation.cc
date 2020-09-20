@@ -334,7 +334,7 @@ void Navigation::Run() {
 
     // constants
     const float curv_inc = 0.2;
-    const float carrot_dist = 1.2;
+    const float carrot_dist = 2.0;
     float dist_to_carrot = carrot_dist;
 
     // relative goal
