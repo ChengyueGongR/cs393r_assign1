@@ -76,8 +76,8 @@ class Navigation {
  private:
 
   float safety_margin = 0.1;
-  float w = 0.14 + safety_margin;
-  float h = 0.43 + safety_margin;
+  float w = 0.2 + safety_margin;
+  float h = 0.4 + safety_margin;
 
   // Map of the environment.
   vector_map::VectorMap map_;
