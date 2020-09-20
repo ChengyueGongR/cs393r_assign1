@@ -196,55 +196,7 @@ void Navigation::MakeGraph() {
             delete new_vertex;
         }
     }
-}
 
-
-// Vertex JumpPoint(Vertex current, float x_diff, float y_diff) {
-//     float next_x = current.x() + x_diff;
-//     float next_y = current.y() + y_diff;
-//     string next_id = std::to_string(next_x) + "," + std::to_string(next_y);
-//     Vertex goal_vertex = graph[goal_vertex_id];
-//
-//     if (graph.count(next_id) == 0 || next_CollidesWithMap(current.loc, nextloc)) {
-//         return null;
-//     }
-//
-//     if (next_x == goal_vertex.x() && next_y == goal_vertex.y()) {
-//         return goal_vertex;
-//     }
-//
-//     Vertex next_vertex = graph[next_id];
-//     const int max_neighbors = 8;
-//
-//     // going diagonal
-//     if (x_diff != 0 && y_diff != 0) {
-//         if (true) {
-//             // is forced neighbor
-//             return next_vertex;
-//         }
-//
-//         // check horizontal and vertical directions for forced neighbors
-//         if (jump(next_x, next_y, x_diff, 0) != null ||
-//             jump(next_x, next_y, 0, y_diff) != null)
-//         {
-//             return next_vertex;
-//         }
-//     } else if (x_diff != 0) {
-//         // horizontal jumping
-//         if (true) {
-//             // is a forced neighbor
-//             return next_vertex;
-//         }
-//     } else {
-//         // vertical jumping
-//         if (true) {
-//             // is a forced neighbor
-//             return next_vertex;
-//         }
-//     }
-//
-//     return JumpPoint(next_vertex, x_diff, y_diff);
-// }
 
 void Navigation::CalculatePath() {
     string start_vertex_id = GetClosestVertexID(robot_loc_);
