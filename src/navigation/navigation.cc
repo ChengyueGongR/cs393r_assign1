@@ -317,18 +317,6 @@ double CalcVDelta(const double v_0, const double t, const double d) {
     return v_delta;
 }
 
-// Uses local message
-void Navigation::DrawCar(const Vector2f& local_point, uint32_t color, float angle) {
-    Vector2f p1(local_point.x() - 0.5*(h-wheelbase), local_point.y() + 0.5*w + angle);
-    Vector2f p2(local_point.x() + 0.5*(h+wheelbase), local_point.y() + 0.5*w);
-    Vector2f p3(local_point.x() + 0.5*(h+wheelbase), local_point.y() - 0.5*w);
-    Vector2f p4(local_point.x() - 0.5*(h-wheelbase), local_point.y() - 0.5*w);
-    visualization::DrawLine(GlobalizePoint(p1), GlobalizePoint(p2), color, local_viz_msg_);
-    visualization::DrawLine(GlobalizePoint(p2), GlobalizePoint(p3), color, local_viz_msg_);
-    visualization::DrawLine(GlobalizePoint(p3), GlobalizePoint(p4), color, local_viz_msg_);
-    visualization::DrawLine(GlobalizePoint(p4), GlobalizePoint(p1), color, local_viz_msg_);
-}
-
 void Navigation::Run() {
     if (!initialized)
         return;
