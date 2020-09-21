@@ -180,16 +180,11 @@ void Navigation::MakeGraph() {
                                 }
                             }
                             if (!collides) {
-                                //string neighbor_id = std::to_string(i_) + "," + std::to_string(j_);
-                                //std::cout << "id1 " << neighbor_id << "\n";
                                 new_vertex->neighbors.push_back(neighbor_id);
                             }
                         }
                     }
                 }
-                //std::cout << "i, j --- " << i << ", " << j << "\n";
-                //std::cout << "id2 " << new_id << " || " << "\n";
-                //std::cout << "id2 " << new_vertex->id << " ** " << "\n";
                 new_vertex->loc = new_vertex_loc;
                 graph.insert(std::pair<string, Vertex>(new_vertex->id, *new_vertex));
             }
@@ -225,7 +220,6 @@ void Navigation::CalculatePath() {
                                                    next.loc.y() - current.loc.y());
                 float new_cost = cost[current_id] + edge_weight;
                 if (cost.count(next_id) == 0 || new_cost < cost[next_id]) {
-                    //Vertex jp = JumpPoint(current, next.x() - current.x(), next.y() - current.y());
                     cost[next_id] = new_cost;
                     float heuristic = ComputeEucDist(nav_goal_loc_.x() - next.loc.x(),
                             nav_goal_loc_.y() - next.loc.y());
@@ -242,7 +236,7 @@ void Navigation::CalculatePath() {
     planned_path.push_back(graph[goal_vertex_id].loc);
     for (string v = goal_vertex_id; v.compare(start_vertex_id) != 0; v = parent[v]) {
         if (parent[v].compare("") == 0) {
-            // this  means no path was found, which shouldn't happen
+            // no path was found
             std::cout << "Parent was empty!\n";
             break;
         }
@@ -513,7 +507,7 @@ void Navigation::Run() {
     if (best_fpl <= 0.01)
         return;
     
-    // 1D TOC
+    // 1D TOC: check
     double t = 1.0/15.0;
     double v_0 = ComputeEucDist(robot_vel_.x(), robot_vel_.y());
     double v_delta;
