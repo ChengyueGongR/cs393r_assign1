@@ -87,7 +87,7 @@ double ComputeEucDist(const double x, const double y) {
 // Note: What if a wall was completely inside the safety circle?
 bool Navigation::TooCloseToWall(const Eigen::Vector2f vertex_loc) {
     Vector2f intersection(0.0, 0.0);
-    float sd = 0;
+    float sd = safety_margin;
     for (geometry::line2f line : map_.lines) {
         if (geometry::FurthestFreePointCircle(line.p0, line.p1, vertex_loc, w, &sd, &intersection)) {
             return true;
