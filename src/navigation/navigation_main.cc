@@ -47,6 +47,9 @@
 
 #include "navigation.h"
 
+#include "amrl_msgs/Localization2DMsg.h" // put this line at the top with other include lines
+using amrl_msgs::Localization2DMsg; // put this line below include lines
+
 using math_util::DegToRad;
 using math_util::RadToDeg;
 using navigation::Navigation;
@@ -117,11 +120,13 @@ void SignalHandler(int) {
   run_ = false;
 }
 
-void LocalizationCallback(const geometry_msgs::Pose2D& msg) {
+//void LocalizationCallback(const geometry_msgs::Pose2D& msg) {
+void LocalizationCallback(const amrl_msgs::Localization2DMsg msg) {
   if (FLAGS_v > 0) {
     printf("Localization t=%f\n", GetWallTime());
   }
-  navigation_->UpdateLocation(Vector2f(msg.x, msg.y), msg.theta);
+  //navigation_->UpdateLocation(Vector2f(msg.x, msg.y), msg.theta);
+  navigation_->UpdateLocation(Vector2f(msg.pose.x, msg.pose.y), msg.pose.theta);
 }
 
 int main(int argc, char** argv) {
