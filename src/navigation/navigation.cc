@@ -284,15 +284,15 @@ Vector2f Navigation::LocalizePoint(const Vector2f& global_point) {
     return local_point;
 }
 
-double CalcVDelta(const double v_0, const double t, const double d) {
-    double v_delta;
+float CalcVDelta(const float v_0, const float t, const float d) {
+    float v_delta;
     // accelerate for 1 step
-    double a_max = 3;
-    double a_min = -3;
-    double v_f = v_0 + a_max * t;
-    double x_1 = t * (v_0 + v_f) / 2;
-    double t_2 = v_f / -a_min;
-    double x_2 = t_2 * (v_f / 2);
+    float a_max = 3;
+    float a_min = -3;
+    float v_f = v_0 + a_max * t;
+    float x_1 = t * (v_0 + v_f) / 2;
+    float t_2 = v_f / -a_min;
+    float x_2 = t_2 * (v_f / 2);
     if (x_1 + x_2 <= d) {
         v_delta = a_max * t;
     } else {
@@ -304,7 +304,7 @@ double CalcVDelta(const double v_0, const double t, const double d) {
             v_delta = 0;
         } else {
             // decelerate for 1 step
-            double a = (v_0 * v_0) / (2 * d);
+            float a = (v_0 * v_0) / (2 * d);
             v_delta = -a * t;
         }
     }
