@@ -316,7 +316,7 @@ void Navigation::Run() {
         return;
 
     // constants
-    const float curv_inc = 0.2;
+    const float curv_inc = 0.05;
     const float frontgoal_dist = 2.0;
     float dist_to_frontgoal = frontgoal_dist;
 
@@ -357,16 +357,16 @@ void Navigation::Run() {
             // draw planned path
             visualization::DrawLine(p1, p2, 0x11FF11, local_viz_msg_);
         }
-        visualization::DrawCross(nav_goal_loc_, .15, 0x8B7FFF, local_viz_msg_);
+        visualization::DrawCross(nav_goal_loc_, .1, 0x8B7FFF, local_viz_msg_);
     }
-    visualization::DrawCross(GlobalizePoint(frontgoal), .1, 0xFF0000, local_viz_msg_);
+    visualization::DrawCross(GlobalizePoint(frontgoal), .05, 0xFF0000, local_viz_msg_);
 
     // evaluate possible paths
     float best_curv = 0;
     float best_score = -std::numeric_limits<float>::max();
     float best_fpl = 0;
 
-    for (float curv = -1; curv <= 1; curv += curv_inc) {
+    for (float curv = -3; curv <= 3; curv += curv_inc) {
         float fpl = frontgoal_dist;
         float clearance = .2;
         Vector2f dest;
@@ -491,7 +491,7 @@ void Navigation::Run() {
             dist_to_frontgoal = ComputeEucDist(dest_x - frontgoal.x(), dest_y - frontgoal.y());
         }
 
-        float w1 = 0.0;
+        float w1 = 1.0;
         float w2 = -2.0;
         float score = fpl + w1 * clearance + w2 * dist_to_frontgoal;
         if (score > best_score) {
