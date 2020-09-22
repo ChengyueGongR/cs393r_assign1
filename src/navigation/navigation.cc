@@ -180,16 +180,11 @@ void Navigation::MakeGraph() {
                                 }
                             }
                             if (!collides) {
-                                //string neighbor_id = std::to_string(i_) + "," + std::to_string(j_);
-                                //std::cout << "id1 " << neighbor_id << "\n";
                                 new_vertex->neighbors.push_back(neighbor_id);
                             }
                         }
                     }
                 }
-                //std::cout << "i, j --- " << i << ", " << j << "\n";
-                //std::cout << "id2 " << new_id << " || " << "\n";
-                //std::cout << "id2 " << new_vertex->id << " ** " << "\n";
                 new_vertex->loc = new_vertex_loc;
                 graph.insert(std::pair<string, Vertex>(new_vertex->id, *new_vertex));
             }
@@ -242,7 +237,7 @@ void Navigation::CalculatePath() {
     planned_path.push_back(graph[goal_vertex_id].loc);
     for (string v = goal_vertex_id; v.compare(start_vertex_id) != 0; v = parent[v]) {
         if (parent[v].compare("") == 0) {
-            // this  means no path was found, which shouldn't happen
+            // this  means no path was found
             std::cout << "Parent was empty!\n";
             break;
         }
@@ -332,7 +327,6 @@ void Navigation::Run() {
 
     // visuals
     visualization::ClearVisualizationMsg(local_viz_msg_);
-    // DrawCar(Vector2f(0,0), 0xFF0000, 0.0);
 
     // test: self-set nav goal
     SetNavGoal(Vector2f(robot_loc_.x() + 2, robot_loc_.y() + 0), 0);
@@ -363,8 +357,10 @@ void Navigation::Run() {
             // draw planned path
             visualization::DrawLine(p1, p2, 0x11FF11, local_viz_msg_);
         }
+	// draw cross
         visualization::DrawCross(nav_goal_loc_, .1, 0x8B7FFF, local_viz_msg_);
     }
+    // draw cross
     visualization::DrawCross(GlobalizePoint(frontgoal), .05, 0xFF0000, local_viz_msg_);
 
     // evaluate possible paths
