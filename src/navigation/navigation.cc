@@ -180,11 +180,16 @@ void Navigation::MakeGraph() {
                                 }
                             }
                             if (!collides) {
+                                //string neighbor_id = std::to_string(i_) + "," + std::to_string(j_);
+                                //std::cout << "id1 " << neighbor_id << "\n";
                                 new_vertex->neighbors.push_back(neighbor_id);
                             }
                         }
                     }
                 }
+                //std::cout << "i, j --- " << i << ", " << j << "\n";
+                //std::cout << "id2 " << new_id << " || " << "\n";
+                //std::cout << "id2 " << new_vertex->id << " ** " << "\n";
                 new_vertex->loc = new_vertex_loc;
                 graph.insert(std::pair<string, Vertex>(new_vertex->id, *new_vertex));
             }
@@ -220,6 +225,7 @@ void Navigation::CalculatePath() {
                                                    next.loc.y() - current.loc.y());
                 float new_cost = cost[current_id] + edge_weight;
                 if (cost.count(next_id) == 0 || new_cost < cost[next_id]) {
+                    //Vertex jp = JumpPoint(current, next.x() - current.x(), next.y() - current.y());
                     cost[next_id] = new_cost;
                     float heuristic = ComputeEucDist(nav_goal_loc_.x() - next.loc.x(),
                             nav_goal_loc_.y() - next.loc.y());
@@ -236,7 +242,7 @@ void Navigation::CalculatePath() {
     planned_path.push_back(graph[goal_vertex_id].loc);
     for (string v = goal_vertex_id; v.compare(start_vertex_id) != 0; v = parent[v]) {
         if (parent[v].compare("") == 0) {
-            // no path was found
+            // this  means no path was found, which shouldn't happen
             std::cout << "Parent was empty!\n";
             break;
         }
@@ -249,7 +255,7 @@ void Navigation::UpdateOdometry(const Vector2f& loc,
                                 const Vector2f& vel,
                                 float ang_vel) {
     if (!initialized && loc.x() != 0) {
-        initialized = true;
+	initialized = true;
     }
     robot_loc_ = loc;
     robot_angle_ = angle;
@@ -260,9 +266,9 @@ void Navigation::UpdateOdometry(const Vector2f& loc,
 void Navigation::ObservePointCloud(const vector<Vector2f>& cloud,
                                    double time) {
     visualization::ClearVisualizationMsg(local_viz_msg_);
-    point_cloud.clear();
-    for (Vector2f point : cloud) {
-        point_cloud.push_back(point);
+    point_cloud.clear();            
+    for (Vector2f point : cloud) {          
+	point_cloud.push_back(point);
     }
 }
 
@@ -317,7 +323,7 @@ void Navigation::Run() {
 
     // constants
     const float curv_inc = 0.05;
-    const float frontgoal_dist = 2.0;
+    const float frontgoal_dist = 4.0;
     float dist_to_frontgoal = frontgoal_dist;
 
     // relative goal
@@ -329,7 +335,7 @@ void Navigation::Run() {
     // DrawCar(Vector2f(0,0), 0xFF0000, 0.0);
 
     // test: self-set nav goal
-    SetNavGoal(Vector2f(robot_loc_.x() + 4, robot_loc_.y() - 1.5), 0);
+    SetNavGoal(Vector2f(robot_loc_.x() + 2, robot_loc_.y() + 0), 0);
 
     if (nav_goal_set_) {
         // don't move if reached goal
@@ -398,9 +404,9 @@ void Navigation::Run() {
 
             // Assumes goal is straight ahead dist meters
             fpl = 0.5 * 3.14 * r;
-	    double r_min = r - 0.5 * w;
-	    double r_corner = ComputeEucDist(r - 0.5 * w, 0.5 * ( h + wheelbase ) );
-	    double r_max = ComputeEucDist(r + 0.5 * w, 0.5 * ( h + wheelbase ) );
+	    float r_min = r - 0.5 * w;
+	    float r_corner = ComputeEucDist(r - 0.5 * w, 0.5 * ( h + wheelbase ) );
+	    float r_max = ComputeEucDist(r + 0.5 * w, 0.5 * ( h + wheelbase ) );
 	    /* fpl = r * atan2(frontgoal_dist, r);
             double r_1 = r - w;
             double r_2 = ComputeEucDist(r + w, h);
@@ -419,11 +425,11 @@ void Navigation::Run() {
                     point_y =  - point.y();
                 }
                 //std::cout << "point y AFTER  --- " << point.y() << "\n";
-                double r_point = ComputeEucDist(point.x(), point_y - r);
-                double theta_p = atan2(point.x()+laser_loc.x(), r - point_y); // atan2(point.x(), r - point_y);
+                float r_point = ComputeEucDist(point.x(), point_y - r);
+                float theta_p = atan2(point.x()+laser_loc.x(), r - point_y); // atan2(point.x(), r - point_y);
                 if (r_point >= r_min && r_point <= r_corner && theta_p > 0) {
                     // the point is an obstable
-		    double theta_org = atan2( sqrt ( Sq(r_point) - Sq(r_min) ), r_min);
+		    float theta_org = atan2( sqrt ( Sq(r_point) - Sq(r_min) ), r_min);
                     float curv_dist = (theta_p - theta_org) * r;
                     if (curv_dist < -.05)
                         continue;
@@ -431,7 +437,7 @@ void Navigation::Run() {
                 }
 		if (r_point > r_corner && r_point <= r_max && theta_p > 0) {
 		    float curv_dist = 0.0;
-		    double theta_org = atan2(0.5*(h+wheelbase), sqrt(Sq(r_point)-Sq(0.5*(h+wheelbase))));
+		    float theta_org = atan2(0.5*(h+wheelbase), sqrt(Sq(r_point)-Sq(0.5*(h+wheelbase))));
 		    curv_dist = (theta_p - theta_org) * r;	    
 		    if (curv_dist < -.05)
 			continue;
@@ -447,16 +453,16 @@ void Navigation::Run() {
                 if (turn_right) {
                     point_y = -1 * point.y();
                 }
-                double r_point = ComputeEucDist(point.x()+laser_loc.x(), point_y - r);
-                double theta_p = atan2(point.x()+laser_loc.x(), r - point_y);
+                float r_point = ComputeEucDist(point.x()+laser_loc.x(), point_y - r);
+                float theta_p = atan2(point.x()+laser_loc.x(), r - point_y);
                 // float curv_dist = r * (theta - omega);
 		float curv_dist = 0.0;
                 if (r_point >= r_min && r_point <= r_corner && theta_p > 0) {
-		    double theta_org = atan2(sqrt(Sq(r_point)-Sq(r_min)),r_min); //acos(r_min, r_point);
+		    float theta_org = atan2(sqrt(Sq(r_point)-Sq(r_min)),r_min); //acos(r_min, r_point);
 		    curv_dist = (theta_p - theta_org) * r;	
 		}
 		if (r_point > r_corner && r_point <= r_max && theta_p > 0) {
-		    double theta_org = atan2(0.5*(h+wheelbase), sqrt(Sq(r_point)-Sq(0.5*(h+wheelbase))));//asin(0.5*(h+wheelbase), r_point);
+		    float theta_org = atan2(0.5*(h+wheelbase), sqrt(Sq(r_point)-Sq(0.5*(h+wheelbase))));//asin(0.5*(h+wheelbase), r_point);
 		    curv_dist = (theta_p - theta_org) * r;
 		}
 		if (curv_dist < fpl && curv_dist >= 0) {
@@ -492,7 +498,7 @@ void Navigation::Run() {
         }
 
         float w1 = 1.0;
-        float w2 = -2.0;
+        float w2 = - 3.0;
         float score = fpl + w1 * clearance + w2 * dist_to_frontgoal;
         if (score > best_score) {
             best_score = score;
@@ -507,8 +513,8 @@ void Navigation::Run() {
     if (best_fpl <= 0.01)
         return;
     
-    // 1D TOC: check
-    double t = 1.0/15.0;
+    // 1D TOC
+    double t = 1.0 / 15.0;
     double v_0 = ComputeEucDist(robot_vel_.x(), robot_vel_.y());
     double v_delta;
 
