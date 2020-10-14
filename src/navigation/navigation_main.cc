@@ -31,6 +31,7 @@
 #include "gflags/gflags.h"
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
+#include "amrl_msgs/Localization2DMsg.h"
 #include "gflags/gflags.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/PoseArray.h"
@@ -47,9 +48,7 @@
 
 #include "navigation.h"
 
-#include "amrl_msgs/Localization2DMsg.h" // put this line at the top with other include lines
-using amrl_msgs::Localization2DMsg; // put this line below include lines
-
+using amrl_msgs::Localization2DMsg;
 using math_util::DegToRad;
 using math_util::RadToDeg;
 using navigation::Navigation;
@@ -70,8 +69,6 @@ DEFINE_string(init_topic,
               "initialpose",
               "Name of ROS topic for initialization");
 DEFINE_string(map, "maps/GDC1.txt", "Name of vector map file");
-DEFINE_double(curv, 0.0, "angle of curvature from -1 to 1");
-DEFINE_double(dist, 1, "distance in meters to navigate");
 
 bool run_ = true;
 sensor_msgs::LaserScan last_laser_msg_;
@@ -120,12 +117,10 @@ void SignalHandler(int) {
   run_ = false;
 }
 
-//void LocalizationCallback(const geometry_msgs::Pose2D& msg) {
 void LocalizationCallback(const amrl_msgs::Localization2DMsg msg) {
   if (FLAGS_v > 0) {
     printf("Localization t=%f\n", GetWallTime());
   }
-  //navigation_->UpdateLocation(Vector2f(msg.x, msg.y), msg.theta);
   navigation_->UpdateLocation(Vector2f(msg.pose.x, msg.pose.y), msg.pose.theta);
 }
 
@@ -135,8 +130,7 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "navigation", ros::init_options::NoSigintHandler);
   ros::NodeHandle n;
-  navigation_ = new Navigation(FLAGS_map, FLAGS_dist, FLAGS_curv, &n);
-  // navigation_ = new Navigation(FLAGS_map, &n);
+  navigation_ = new Navigation(FLAGS_map, &n);
 
   ros::Subscriber velocity_sub =
       n.subscribe(FLAGS_odom_topic, 1, &OdometryCallback);
@@ -147,7 +141,6 @@ int main(int argc, char** argv) {
   ros::Subscriber goto_sub =
       n.subscribe("/move_base_simple/goal", 1, &GoToCallback);
 
-  
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {
     ros::spinOnce();

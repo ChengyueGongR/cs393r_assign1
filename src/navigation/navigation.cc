@@ -56,28 +56,22 @@ const float kEpsilon = 1e-5;
 
 namespace navigation {
 
-Navigation::Navigation(const string& map_file, const double dist, const double curv, ros::NodeHandle* n) :
-    point_cloud(),
-    initialized(true),
+Navigation::Navigation(const string& map_file, ros::NodeHandle* n) :
     robot_loc_(0, 0),
     robot_angle_(0),
     robot_vel_(0, 0),
     robot_omega_(0),
     nav_complete_(true),
     nav_goal_loc_(0, 0),
-    nav_goal_angle_(0),
-    goal_vertex_id(""),
-    runs_since_path_calc(6),
-    nav_goal_set_(false) {
-    drive_pub_ = n->advertise<AckermannCurvatureDriveMsg>(
+    nav_goal_angle_(0) {
+  drive_pub_ = n->advertise<AckermannCurvatureDriveMsg>(
       "ackermann_curvature_drive", 1);
-    viz_pub_ = n->advertise<VisualizationMsg>("visualization", 1);
-    local_viz_msg_ = visualization::NewVisualizationMessage(
+  viz_pub_ = n->advertise<VisualizationMsg>("visualization", 1);
+  local_viz_msg_ = visualization::NewVisualizationMessage(
       "base_link", "navigation_local");
-    global_viz_msg_ = visualization::NewVisualizationMessage(
+  global_viz_msg_ = visualization::NewVisualizationMessage(
       "map", "navigation_global");
-    InitRosHeader("base_link", &drive_msg_.header);
-    map_.Load(map_file);
+  InitRosHeader("base_link", &drive_msg_.header);
 }
 
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
@@ -102,7 +96,8 @@ void Navigation::ObservePointCloud(const vector<Vector2f>& cloud,
     visualization::ClearVisualizationMsg(local_viz_msg_);
     point_cloud.clear();
     for (Vector2f point : cloud) {
-        point_cloud.push_back(point);
+	    std::cout<<"cool"<<'\n';
+	point_cloud.push_back(point);
     }
 }
 
@@ -121,18 +116,21 @@ void Navigation::DrawCar(const Vector2f& local_point, uint32_t color, float angl
     Vector2f p2(local_point.x() + 0.5*(h+wheelbase), local_point.y() + 0.5*w);
     Vector2f p3(local_point.x() + 0.5*(h+wheelbase), local_point.y() - 0.5*w);
     Vector2f p4(local_point.x() - 0.5*(h-wheelbase), local_point.y() - 0.5*w);
-    visualization::DrawLine(GlobalizePoint(p1), GlobalizePoint(p2), color, local_viz_msg_);
-    visualization::DrawLine(GlobalizePoint(p2), GlobalizePoint(p3), color, local_viz_msg_);
-    visualization::DrawLine(GlobalizePoint(p3), GlobalizePoint(p4), color, local_viz_msg_);
-    visualization::DrawLine(GlobalizePoint(p4), GlobalizePoint(p1), color, local_viz_msg_);
+    //visualization::DrawLine(GlobalizePoint(p1), GlobalizePoint(p2), color, local_viz_msg_);
+    //visualization::DrawLine(GlobalizePoint(p2), GlobalizePoint(p3), color, local_viz_msg_);
+    //visualization::DrawLine(GlobalizePoint(p3), GlobalizePoint(p4), color, local_viz_msg_);
+    //visualization::DrawLine(GlobalizePoint(p4), GlobalizePoint(p1), color, local_viz_msg_);
+    visualization::DrawLine(p1, p2, color, local_viz_msg_);
+    visualization::DrawLine(p2, p3, color, local_viz_msg_);
+    visualization::DrawLine(p3, p4, color, local_viz_msg_);
+    visualization::DrawLine(p4, p1, color, local_viz_msg_);
+
 }
 
 void Navigation::Run() {
-    if (!initialized)
-        return;
-
+    
     // constants
-    const float curv_inc = 0.2;
+    const float curv_inc = 0.1;
     const float frontgoal_dist = 2.0;
     float dist_to_frontgoal = frontgoal_dist;
 
@@ -141,6 +139,7 @@ void Navigation::Run() {
     Vector2f laser_loc(0.2, 0.0);
     // visuals
     visualization::ClearVisualizationMsg(local_viz_msg_);
+    visualization::DrawCross(Vector2f(2, 0), 0.2, 0xFF0000, local_viz_msg_);
     DrawCar(Vector2f(0,0), 0xFF0000, 0.0);
 
     // evaluate possible paths
@@ -148,7 +147,7 @@ void Navigation::Run() {
     float best_score = -std::numeric_limits<float>::max();
     float best_fpl = 0;
 
-    for (float curv = -1; curv <= 1; curv += curv_inc) {
+    for (float curv = -3; curv <= 3; curv += curv_inc) {
         float fpl = frontgoal_dist;
         float clearance = 0.2;
         Vector2f dest;
@@ -270,9 +269,9 @@ void Navigation::Run() {
         float w2 = -1.0;
         
         float score = fpl + w1 * clearance + w2 * dist_to_frontgoal;
-        
+	std::cout << "curv " << curv << " fpl " << fpl << " clearance " << clearance << " dist_to_frontgoal " << dist_to_frontgoal << "\n";
 	if (score > best_score) {
-	    // Rule Out impossible paths by 1DTOC
+	    // TODO: Rule Out impossible paths by 1DTOC
             best_score = score;
             best_curv = curv;
             best_fpl = fpl;
@@ -287,7 +286,7 @@ void Navigation::Run() {
     
     double max_v = 1.0;
     drive_msg_.velocity = max_v;
-    drive_msg_.curvature = 0;//best_curv;
+    drive_msg_.curvature = best_curv;
     drive_pub_.publish(drive_msg_);
 
   // Create Helper functions here

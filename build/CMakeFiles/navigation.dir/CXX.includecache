@@ -1363,6 +1363,8 @@ eigen3/Eigen/Dense
 /u/xcliu/projects/cs393r_starter/src/navigation/eigen3/Eigen/Dense
 eigen3/Eigen/Geometry
 /u/xcliu/projects/cs393r_starter/src/navigation/eigen3/Eigen/Geometry
+amrl_msgs/Localization2DMsg.h
+/u/xcliu/projects/cs393r_starter/src/navigation/amrl_msgs/Localization2DMsg.h
 gflags/gflags.h
 /u/xcliu/projects/cs393r_starter/src/navigation/gflags/gflags.h
 geometry_msgs/Pose2D.h
@@ -1391,6 +1393,4 @@ shared/ros/ros_helpers.h
 /u/xcliu/projects/cs393r_starter/src/navigation/shared/ros/ros_helpers.h
 navigation.h
 /u/xcliu/projects/cs393r_starter/src/navigation/navigation.h
-amrl_msgs/Localization2DMsg.h
-/u/xcliu/projects/cs393r_starter/src/navigation/amrl_msgs/Localization2DMsg.h
 
