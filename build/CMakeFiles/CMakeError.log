@@ -1,23 +1,23 @@
 Determining if the pthread_create exist failed with the following output:
 Change Dir: /u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_a647c/fast"
+Run Build Command:"/usr/bin/make" "cmTC_ca043/fast"
 make[1]: Entering directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
-/usr/bin/make -f CMakeFiles/cmTC_a647c.dir/build.make CMakeFiles/cmTC_a647c.dir/build
+/usr/bin/make -f CMakeFiles/cmTC_ca043.dir/build.make CMakeFiles/cmTC_ca043.dir/build
 make[2]: Entering directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_a647c.dir/CheckSymbolExists.c.o
-/usr/bin/gcc    -o CMakeFiles/cmTC_a647c.dir/CheckSymbolExists.c.o   -c /u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_a647c
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a647c.dir/link.txt --verbose=1
-/usr/bin/gcc      -rdynamic CMakeFiles/cmTC_a647c.dir/CheckSymbolExists.c.o  -o cmTC_a647c 
-CMakeFiles/cmTC_a647c.dir/CheckSymbolExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_ca043.dir/CheckSymbolExists.c.o
+/usr/bin/gcc    -o CMakeFiles/cmTC_ca043.dir/CheckSymbolExists.c.o   -c /u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_ca043
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ca043.dir/link.txt --verbose=1
+/usr/bin/gcc      -rdynamic CMakeFiles/cmTC_ca043.dir/CheckSymbolExists.c.o  -o cmTC_ca043 
+CMakeFiles/cmTC_ca043.dir/CheckSymbolExists.c.o: In function `main':
 CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_a647c.dir/build.make:97: recipe for target 'cmTC_a647c' failed
-make[2]: *** [cmTC_a647c] Error 1
+CMakeFiles/cmTC_ca043.dir/build.make:97: recipe for target 'cmTC_ca043' failed
+make[2]: *** [cmTC_ca043] Error 1
 make[2]: Leaving directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_a647c/fast' failed
-make[1]: *** [cmTC_a647c/fast] Error 2
+Makefile:126: recipe for target 'cmTC_ca043/fast' failed
+make[1]: *** [cmTC_ca043/fast] Error 2
 make[1]: Leaving directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
 
 File /u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
@@ -38,22 +38,22 @@ int main(int argc, char** argv)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_ac232/fast"
+Run Build Command:"/usr/bin/make" "cmTC_16748/fast"
 make[1]: Entering directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
-/usr/bin/make -f CMakeFiles/cmTC_ac232.dir/build.make CMakeFiles/cmTC_ac232.dir/build
+/usr/bin/make -f CMakeFiles/cmTC_16748.dir/build.make CMakeFiles/cmTC_16748.dir/build
 make[2]: Entering directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_ac232.dir/CheckFunctionExists.c.o
-/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_ac232.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_ac232
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ac232.dir/link.txt --verbose=1
-/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_ac232.dir/CheckFunctionExists.c.o  -o cmTC_ac232 -lpthreads 
+Building C object CMakeFiles/cmTC_16748.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_16748.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_16748
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_16748.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_16748.dir/CheckFunctionExists.c.o  -o cmTC_16748 -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_ac232.dir/build.make:97: recipe for target 'cmTC_ac232' failed
-make[2]: *** [cmTC_ac232] Error 1
+CMakeFiles/cmTC_16748.dir/build.make:97: recipe for target 'cmTC_16748' failed
+make[2]: *** [cmTC_16748] Error 1
 make[2]: Leaving directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_ac232/fast' failed
-make[1]: *** [cmTC_ac232/fast] Error 2
+Makefile:126: recipe for target 'cmTC_16748/fast' failed
+make[1]: *** [cmTC_16748/fast] Error 2
 make[1]: Leaving directory '/u/xcliu/projects/cs393r_starter/build/CMakeFiles/CMakeTmp'
 
 
