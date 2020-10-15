@@ -70,7 +70,6 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
                                             float angle_min,
                                             float angle_max,
                                             vector<Vector2f>* scan_ptr) {
-  vector<Vector2f>& scan = *scan_ptr;
   // Compute what the predicted point cloud would be, if the car was at the pose
   // loc, angle, with the sensor characteristics defined by the provided
   // parameters.
@@ -112,35 +111,39 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
       printf("No intersection\n");
     }
   }*/
-  scan.resize(num_ranges);
-  printf("map size:%lu", map_.lines.size());
+  //scan.resize(num_ranges);
+  //printf("map size:%lu", map_.lines.size());
   // Fill in the entries of scan using array writes, e.g. scan[i] = ...
-  for (size_t i = 0; i < scan.size(); ++i) {
-    scan[i] = Vector2f(0, 0);
+  for (int i = 0; i < num_ranges; ++i) {
+    Vector2f scan_cur = Vector2f(0, 0);
+    //printf("1: scan(%f, %f)", scan[0].x(), scan[0].y());
     float angle_cur = angle_min + i*(angle_max-angle_min)/(num_ranges-1);
     // To global frame
     angle_cur = angle_cur + angle;
     // The laser scan from this angle
-    line2f line_cur(range_min*cos(angle_cur), range_min*sin(angle_cur), range_max*cos(angle_cur),range_max*sin(angle_cur));
+    line2f line_cur(range_min*cos(angle_cur)+loc.x(), range_min*sin(angle_cur)+loc.y(), range_max*cos(angle_cur)+loc.x(), range_max*sin(angle_cur)+loc.y());
     //loop over map
-    float length_cur = range_max;
-    scan[i].x() = range_max*cos(angle_cur);
-    scan[i].y() = range_max*sin(angle_cur);
+    float length_cur = 100.0;
+    scan_cur.x() = range_max*cos(angle_cur)+loc.x();
+    scan_cur.y() = range_max*sin(angle_cur)+loc.y();
     for (size_t j = 0; j < map_.lines.size(); ++j){
-      const line2f map_line = map_.lines[i];
+      const line2f map_line = map_.lines[j];
       bool intersects = map_line.Intersects(line_cur);
       if (intersects){
         Vector2f intersection_point; // Return variable
         intersects = map_line.Intersection(line_cur, &intersection_point);
-        float length = sqrt(pow(intersection_point.x()-range_min*cos(angle_cur),2)+pow(intersection_point.y()-range_min*sin(angle_cur),2));
+	float length = sqrt(pow(intersection_point.x()-range_min*cos(angle_cur)-loc.x(),2)+pow(intersection_point.y()-range_min*sin(angle_cur-loc.y()),2));
+	
 	if (length<length_cur){
-	  scan[i].x() = intersection_point.x();
-	  scan[i].y() = intersection_point.y();
+	  scan_cur.x() = intersection_point.x();
+	  scan_cur.y() = intersection_point.y();
+	  length_cur = length;
 	}
       }
-    } 
+    }
+    (*scan_ptr).push_back(scan_cur);
   }
-
+  printf("1: scan cur:%f, %f", (*scan_ptr)[0].x(), (*scan_ptr)[0].y());  
 }
 
 void ParticleFilter::Update(const vector<float>& ranges,
@@ -157,14 +160,19 @@ void ParticleFilter::Update(const vector<float>& ranges,
   int num_ranges = ranges.size();
   vector<Vector2f> scan;
   GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, num_ranges, range_min, range_max, angle_min, angle_max, &scan);
-  float sigma_ob = 0.05;
+  printf("Outside: scan(%f, %f)", scan[0].x(), scan[0].y());
+  float sigma_ob = 0.1;
   float gamma =0.9;
   p_ptr->weight = 0.0;
   for (size_t i = 0; i < ranges.size(); ++i){
       float range = ranges[i];
       float range_predicted = sqrt(pow(scan[i].x()-p_ptr->loc.x(),2)+pow(scan[i].y()-p_ptr->loc.y(),2));
+      //if (i==0){
+      //  printf("range:%f, range_pred:%f, scan:(%f, %f)\n", range, range_predicted, scan[i].x(), scan[i].y());
+      //}
       p_ptr->weight += gamma * (-0.5) * (pow(range-range_predicted,2)/pow(sigma_ob,2));
   }
+  //printf("particle weight:%f", p_ptr->weight);
 }
 
 void ParticleFilter::Resample() {
@@ -191,6 +199,7 @@ void ParticleFilter::Resample() {
       log_weight_min = p.weight;
     }
   }
+  printf("min log weight:%f\n", log_weight_min);
   float sum_weight = 0.0;
   for (Particle& p : particles_){
     p.weight = p.weight - log_weight_min;
@@ -200,7 +209,6 @@ void ParticleFilter::Resample() {
   for (Particle& p : particles_){
     p.weight = p.weight/sum_weight;
   }
-  
   // Resample
   vector<Particle> new_particles;
   for (int i=0; i<NUM_PARTICLES;++i){
@@ -227,6 +235,7 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
   // A new laser scan observation is available (in the laser frame)
   // Call the Update and Resample steps as necessary.
   //printf("range_min:%f, range_max:%f, angle min:%f, angle max:%f", range_min, range_max,angle_min, angle_max);
+  
   for (Particle& p : particles_){
     Update(ranges, range_min, range_max, angle_min, angle_max, &p);
   }
@@ -327,7 +336,7 @@ void ParticleFilter::GetLocation(Eigen::Vector2f* loc_ptr,
   loc.x() = loc_mean.x()/NUM_PARTICLES;
   loc.y() = loc_mean.y()/NUM_PARTICLES;
   angle = angle_mean/NUM_PARTICLES;
-  //printf("loc: %f, %f, angle: %f\n", loc.x(), loc.y(), angle);
+  printf("loc: %f, %f, angle: %f\n", loc.x(), loc.y(), angle);
 }
 
 }  // namespace particle_filter
