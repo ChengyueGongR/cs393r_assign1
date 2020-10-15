@@ -133,7 +133,7 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
       if (intersects){
         Vector2f intersection_point; // Return variable
         intersects = map_line.Intersection(line_cur, &intersection_point);
-	float length = sqrt(pow(intersection_point.x()-range_min*cos(angle_cur)-loc.x(),2)+pow(intersection_point.y()-range_min*sin(angle_cur-loc.y()),2));
+	float length = sqrt(pow(intersection_point.x()-range_min*cos(angle_cur)-loc.x(),2)+pow(intersection_point.y()-range_min*sin(angle_cur)-loc.y(),2));
 	
 	if (length<length_cur){
 	  scan_cur.x() = intersection_point.x();
@@ -142,9 +142,9 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
 	}
       }
     }
-    if (i==0){
-      printf("min length:%f\n",length_cur);
-    }
+    //if (i==0){
+    //  printf("min length:%f\n",length_cur);
+    //}
     (*scan_ptr).push_back(scan_cur);
   }
   //if (num_ranges>0){
@@ -166,20 +166,21 @@ void ParticleFilter::Update(const vector<float>& ranges,
   int num_ranges = ranges.size();
   vector<Vector2f> scan;
   GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, num_ranges, range_min, range_max, angle_min, angle_max, &scan);
-  if (num_ranges>0){
-    printf("Outside: scan(%f, %f)\n", scan[0].x(), scan[0].y());
-  }
-  float sigma_ob = 0.1;
-  float gamma =0.9;
+  //if (num_ranges>0){
+  //  printf("Outside: scan(%f, %f)\n", scan[0].x(), scan[0].y());
+  //}
+  float sigma_ob = 0.2;
+  float gamma =0.5;
   p_ptr->weight = 0.0;
   for (size_t i = 0; i < ranges.size(); ++i){
       float range = ranges[i];
       float range_predicted = sqrt(pow(scan[i].x()-p_ptr->loc.x(),2)+pow(scan[i].y()-p_ptr->loc.y(),2));
-      if (i==0){
-        printf("range:%f, range_pred:%f, scan:(%f, %f)\n", range, range_predicted, scan[i].x(), scan[i].y());
-      }
+      //if (i==0){
+       // printf("range:%f, range_pred:%f, scan:(%f, %f)\n", range, range_predicted, scan[i].x(), scan[i].y());
+      //}
       p_ptr->weight += gamma * (-0.5) * (pow(range-range_predicted,2)/pow(sigma_ob,2));
   }
+  p_ptr->weight /= num_ranges;
   //printf("particle weight:%f", p_ptr->weight);
   //if (num_ranges>0){
   //  exit(0);
@@ -211,7 +212,7 @@ void ParticleFilter::Resample() {
       log_weight_min = p.weight;
     }
   }
-  printf("min log weight:%f\n", log_weight_min);
+  //printf("min log weight:%f\n", log_weight_min);
   float log_weight_max = log_weight_min - 1.;
   for (Particle& p : particles_){
     //printf("log weight:%f", p.weight);
@@ -224,12 +225,12 @@ void ParticleFilter::Resample() {
     p.weight = p.weight - log_weight_max;
     p.weight = exp(p.weight);
     sum_weight += p.weight;
-    printf("weight:%f\n", p.weight);
   }
-  exit(0);
   for (Particle& p : particles_){
     p.weight = p.weight/sum_weight;
+    //printf("weight:%f\n", p.weight);
   }
+  //exit(0);
   // Resample
   vector<Particle> new_particles;
   for (int i=0; i<NUM_PARTICLES;++i){
@@ -243,9 +244,10 @@ void ParticleFilter::Resample() {
       }
       sum_weight_cur += p.weight;
     }
-    printf("rand:%f, particle:%f, %f, %f\n", rand_num, new_particle.loc.x(), new_particle.loc.y(), new_particle.angle);
+    //printf("rand:%f, particle:%f, %f, %f\n", rand_num, new_particle.loc.x(), new_particle.loc.y(), new_particle.angle);
     new_particles.push_back(new_particle);
   }
+  //exit(0);
   particles_ = new_particles;
 }
 
@@ -331,7 +333,7 @@ void ParticleFilter::Initialize(const string& map_file,
     p.loc.x() = loc.x() + x;
     float y = rng_.Gaussian(0.0, 0.1);
     p.loc.y() = loc.y() + y;
-    float ang = rng_.Gaussian(0.0, 0.05);
+    float ang = rng_.Gaussian(0.0, 0.1);
     p.angle = angle + ang;
     p.weight = 1.0;
     printf("%d: particle location:(%f, %f), rotation: %f, weight: %f\n", i, p.loc.x(), p.loc.y(), p.angle, p.weight);
