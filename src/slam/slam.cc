@@ -19,6 +19,18 @@
 */
 //========================================================================
 
+
+// GTSam includes.
+#include "gtsam/nonlinear/NonlinearFactorGraph.h"
+#include "gtsam/nonlinear/GaussNewtonOptimizer.h"
+#include "gtsam/nonlinear/Marginals.h"
+#include "gtsam/nonlinear/Values.h"
+
+#include "gtsam/inference/Key.h"
+#include "gtsam/geometry/Pose2.h"
+#include "gtsam/slam/BetweenFactor.h"
+
+
 #include <algorithm>
 #include <cmath>
 #include <iostream>
