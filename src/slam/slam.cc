@@ -54,57 +54,45 @@ DEFINE_double(num_particles, 50, "Number of particles");
 
 namespace slam {
 
-config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
+// config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
 SLAM::SLAM() :
     prev_odom_loc_(0, 0),
     prev_odom_angle_(0),
     odom_initialized_(false) {}
 
-void SLAM::GetParticles(vector<Particle>* particles) const {
-  *particles = particles_;
-}
-
-void SLAM::GetPredictedPointCloud(const Vector2f& loc,
-                                            const float angle,
-                                            int num_ranges,
-                                            float range_min,
-                                            float range_max,
-                                            float angle_min,
-                                            float angle_max,
-                                            vector<Vector2f>* scan_ptr) {
-
-}
-
-void SLAM::Update(const vector<float>& ranges,
-                            float range_min,
-                            float range_max,
-                            float angle_min,
-                            float angle_max,
-                            Particle* p_ptr) {
-}
-
-void SLAM::Resample() {
+void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
+  // Return the latest pose estimate of the robot.
+  *loc = Vector2f(0, 0);
+  *angle = 0;
 }
 
 void SLAM::ObserveLaser(const vector<float>& ranges,
-                                  float range_min,
-                                  float range_max,
-                                  float angle_min,
-                                  float angle_max) {
+                        float range_min,
+                        float range_max,
+                        float angle_min,
+                        float angle_max) {
+  // A new laser scan has been observed. Decide whether to add it as a pose
+  // for SLAM. If decided to add, align it to the scan from the last saved pose,
+  // and save both the scan and the optimized pose.
 }
 
-void SLAM::ObserveOdometry(const Vector2f& odom_loc,
-                                     const float odom_angle) {
+void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
+  if (!odom_initialized_) {
+    prev_odom_angle_ = odom_angle;
+    prev_odom_loc_ = odom_loc;
+    odom_initialized_ = true;
+    return;
+  }
+  // Keep track of odometry to estimate how far the robot has moved between 
+  // poses.
 }
 
-void SLAM::Initialize(const string& map_file,
-                                const Vector2f& loc,
-                                const float angle) {
+vector<Vector2f> SLAM::GetMap() {
+  vector<Vector2f> map;
+  // Reconstruct the map as a single aligned point cloud from all saved poses
+  // and their respective scans.
+  return map;
 }
-
-void SLAM::GetLocation(Eigen::Vector2f* loc, float* angle) const {
-}
-
 
 }  // namespace slam
