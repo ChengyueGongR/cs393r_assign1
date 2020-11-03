@@ -71,6 +71,11 @@ class SLAM {
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
   bool odom_initialized_;
+ 
+ // pose estimate
+ Eigen::Vector2f state_loc;
+ float state_angle;
+ 
 };
 }  // namespace slam
 
