@@ -59,8 +59,10 @@ namespace slam {
 SLAM::SLAM() :
     prev_odom_loc_(0, 0),
     prev_odom_angle_(0),
-    state_loc(0, 0),
-    state_angle(0),
+    prev_state_loc_(0, 0),
+    prev_state_angle_(0),
+    state_loc_(0, 0),
+    state_angle_(0),
     odom_initialized_(false)
     map_initialized_(false) {}
 
@@ -72,8 +74,8 @@ void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
     *angle = state_angle;
   }
   return ; 
-}
-
+}    
+    
 vector<Vector2f> GetPointCloud(const vector<float>& ranges,
                                   const float angle_min,
                                   const float angle_max) {
@@ -106,7 +108,70 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
   // for SLAM. If decided to add, align it to the scan from the last saved pose,
   // and save both the scan and the optimized pose.
     
-  // check the implement, here is still some bugs
+  // check the implementation, here is still some bugs
+  if (!map_initialized_ && odom_initialized_ ) {
+    map_pose_.clear(); // clear the log
+    
+    // init the cloud
+    Pose pc0{state_loc_, state_angle_, 
+                GetPointCloud(ranges, angle_min, angle_max)};
+    map_pose_.push_back(pc0);
+      
+    // set flag
+    map_initialized_ = true;
+    prev_state_loc_ = state_loc_;
+    prev_state_angle_ = state_angle_;
+
+    GetRasterMatrix(p0.point_cloud, raster_step_, sensor_sigma_, &raster_matrix_);
+    return ; 
+  }
+  
+  if (odom_initialized_ && map_initialized_ && 
+      ((prev_state_loc_ - state_loc_).norm() > trans_thres_ ||
+      abs(prev_state_angle_ - state_angle_) > angle_thres_)) {
+      
+    GetRasterMatrix(map_pose_.back().point_cloud, raster_step_, sensor_sigma_, &raster_matrix_);
+    vector<Vector2f> pc = GetPointCloud(ranges, angle_min, angle_max);
+    
+    Vector2f const delta_loc_ = state_loc_ - prev_state_loc_ ; // mle
+    float const delta_angle_ = state_angle_ - prev_state_angle_;
+      
+    // set value
+    prev_state_loc_ = state_loc_;
+    prev_state_angle_ = state_angle_;
+    
+    Vector2f delta_loc(0, 0);
+    float delta_angle = 0;
+    float likelihood = -100;
+
+    for(const auto& v: voxel_cube_) {
+      // fixing ... 
+      // first: transform point cloud
+      vector<Vector2f> transformed_pc;
+      transformed_pc.reserve(pc.size());
+      const Rotation2Df rot(delta_angle_ + v.delta_angle);
+      for(auto& p: pc) {
+        transformed_pc.push_back(delta_loc_ + v.delta_loc + rot*p);
+      }
+      
+      float const raster_likelihood = RasterWeighting(raster_matrix,
+                                                      raster_step_,
+                                                      transformed_pc);
+      if (likelihood < raster_likelihood) { 
+        likelihood = raster_likelihood;
+        delta_loc = delta_loc_ + v.delta_loc;
+        delta_angle = delta_angle_ + v.delta_angle;
+      }
+    }
+    Pose node{map_pose_.back().state_loc + delta_loc, 
+              map_pose_scan_.back().state_angle + delta_angle, 
+              loc};
+
+    map_pose_.push_back(mode);
+
+    return;
+  }
+  
 }
 
 void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
@@ -139,7 +204,7 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   return;
 }
 
-void GetRasterMatrix(const vector<Vector2f>& loc,
+void GetRasterMatrix(const vector<Vector2f>& pc,
                      const float& step,
                      const float sensor_noise,
                      MatrixXf* raster_ptr) {
@@ -152,7 +217,7 @@ void GetRasterMatrix(const vector<Vector2f>& loc,
       raster_matrix(i, j) = -10;
       
       // denote that we pass the location info here
-      for(const auto& p: loc) {
+      for(const auto& p: pc) {
         Vector2f temp((i - (int)raster_matrix.size())*step, (j - (int)raster_matrix[0].size())*step);
         float const prob = (-0.5 * (temp-p).norm() * (temp-p).norm() / (sensor_noise * sensor_noise));
         if (prob > raster_matrix(i, j)) {
