@@ -92,7 +92,26 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
     return;
   }
   // Keep track of odometry to estimate how far the robot has moved between 
-  // poses.  
+  // poses.
+  
+  // copy from particle filter
+  float delta_loc = odom_loc - prev_odom_loc_;
+  float delta_angle = odom_angle - prev_odom_angle_;
+    
+    // fixed: here it is negative
+  const Rotation2Df bl_rotation(-prev_odom_angle_);   
+  // transform
+  Vector2f delta_T_bl = bl_rotation * delta_loc;  
+  double const delta_angle_bl = delta_angle;
+  
+  Rotation2Df map_rotation(state_angle_);
+  state_loc_ += map_rotation*delta_T_bl;
+  state_angle_ += delta_angle_bl;
+
+  prev_odom_loc_ = odom_loc;
+  prev_odom_angle_ = odom_angle;
+
+  return;
 }
 
 void GetRasterMatrix(const vector<Vector2f>& loc,
