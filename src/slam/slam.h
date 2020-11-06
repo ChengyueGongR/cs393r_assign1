@@ -84,11 +84,6 @@ class SLAM {
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
   bool odom_initialized_;
-
-  // record the mle state pose estimate
-  Eigen::Vector2f state_loc_;
-  float state_angle_;
-  
   
   std::vector<Pose> map_pose_;
  
