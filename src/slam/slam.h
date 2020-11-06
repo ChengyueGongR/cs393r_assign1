@@ -39,6 +39,14 @@
 
 namespace slam {
 
+struct PoseStar {
+  Eigen::Vector2f state_loc;
+  float state_angle;
+
+  // map or base_link referenced point cloud 
+  std::vector<Eigen::Vector2f> point_cloud;
+};
+ 
 class SLAM {
  public:
   // Default Constructor.
