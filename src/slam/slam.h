@@ -78,7 +78,7 @@ class SLAM {
                       const float sensor_noise,
                       Eigen::MatrixXf* raster_ptr);
   
-  double RasterWeighting(const Eigen::MatrixXf& raster_matrix,
+  float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
                          const float raster_step,
                          const std::vector<Eigen::Vector2f>& point_cloud);
 
