@@ -98,7 +98,27 @@ vector<Vector2f> GetPointCloud(const vector<float>& ranges,
   return point_cloud;
 }
     
-    
+float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
+                         const float raster_step,
+                         const std::vector<Eigen::Vector2f>& point_cloud) {
+  float likelihood = 0;
+  int i, j; // index
+
+  // read all point 
+  for(auto& p: point_cloud) {
+    // Check if the point is within the rasters dimensions
+    if( fabs(p.x()) < raster_step*(raster_matrix.size()-1)/2 &&
+        fabs(p.y()) < raster_step*(raster_matrix[0].size()-1)/2 ) {
+      i = p.x()/raster_step;
+      j = p.y()/raster_step;
+
+      likelihood += raster_matrix(i + (raster.rows()-1) / 2, j + (raster.cols()-1) / 2);
+    }
+  }
+
+  return likelihood;
+}
+
 void SLAM::ObserveLaser(const vector<float>& ranges,
                         float range_min,
                         float range_max,
@@ -229,6 +249,7 @@ void GetRasterMatrix(const vector<Vector2f>& pc,
 
   return;
 }
+
     
 vector<Vector2f> SLAM::GetMap() {
   vector<Vector2f> map;
