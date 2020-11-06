@@ -39,7 +39,7 @@
 
 namespace slam {
 
-struct PoseStar {
+struct Pose {
   Eigen::Vector2f state_loc;
   float state_angle;
 
@@ -88,6 +88,9 @@ class SLAM {
   // record the mle state pose estimate
   Eigen::Vector2f state_loc_;
   float state_angle_;
+  
+  
+  std::vector<Pose> map_pose_;
  
   float const trans_thres_ = 0.75;
   float const angle_thres_ = M_PI/6;
