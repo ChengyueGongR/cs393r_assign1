@@ -73,7 +73,10 @@ class SLAM {
   float prev_odom_angle_;
   bool odom_initialized_;
 
-  
+  // record the mle state pose estimate
+  Eigen::Vector2f state_loc_;
+  float state_angle_;
+ 
   float const trans_thres_ = 0.75;
   float const angle_thres_ = M_PI/6;
  
