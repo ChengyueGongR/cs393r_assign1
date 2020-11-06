@@ -92,11 +92,35 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
     return;
   }
   // Keep track of odometry to estimate how far the robot has moved between 
-  // poses.
-    
-  
+  // poses.  
 }
 
+void GetRasterMatrix(const vector<Vector2f>& loc,
+                     const float& step,
+                     const float sensor_noise,
+                     MatrixXf* raster_ptr) {
+
+  MatrixXf& raster_matrix = *raster_ptr;
+
+  // loop    
+  for (int i = 0; i < ((int)raster_matrix.size()); i++) {
+    for (int j = 0; j < ((int)raster_matrix[0].size()); j++) {
+      raster_matrix(i, j) = -10;
+      
+      // denote that we pass the location info here
+      for(const auto& p: loc) {
+        Vector2f temp((i - (int)raster_matrix.size())*step, (j - (int)raster_matrix[0].size())*step);
+        float const prob = (-0.5 * (temp-p).norm() * (temp-p).norm() / (sensor_noise * sensor_noise));
+        if (prob > raster_matrix(i, j)) {
+          raster_matrix(i, j) = prob;
+        }
+      }
+    }
+  }
+
+  return;
+}
+    
 vector<Vector2f> SLAM::GetMap() {
   vector<Vector2f> map;
   // Reconstruct the map as a single aligned point cloud from all saved poses
