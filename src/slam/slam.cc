@@ -74,6 +74,29 @@ void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   return ; 
 }
 
+vector<Vector2f> GetPointCloud(const vector<float>& ranges,
+                                  const float angle_min,
+                                  const float angle_max) {
+  // copy from navi and patile_filter
+  float const bias = 0.2;
+
+  vector<Vector2f> point_cloud;
+  point_cloud.reserve( ranges.size() );
+
+  float const angle_step = (angle_max - angle_min)/ranges.size();
+  for(auto i=0; i<ranges.size(); i++)
+  {
+    double const theta = angle_min + angle_step * i; 
+    x_i = ranges[i] * cos(theta) + 0.2;
+    y_i = ranges[i] * sin(theta_i);
+
+    point_cloud.push_back(Vector2f(x_i, y_i));
+  }
+  
+  return point_cloud;
+}
+    
+    
 void SLAM::ObserveLaser(const vector<float>& ranges,
                         float range_min,
                         float range_max,
@@ -82,6 +105,8 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
   // A new laser scan has been observed. Decide whether to add it as a pose
   // for SLAM. If decided to add, align it to the scan from the last saved pose,
   // and save both the scan and the optimized pose.
+    
+  // check the implement, here is still some bugs
 }
 
 void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
