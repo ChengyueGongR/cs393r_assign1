@@ -73,7 +73,7 @@ class SLAM {
                                  const float angle_min,
                                  const float angle_max);
  
-  void GetRasterMatrix(const std::vector<Eigen::Vector2f>& loc,
+  void GetRasterMatrix(const std::vector<Eigen::Vector2f>& pc,
                       const float& step,
                       const float sensor_noise,
                       Eigen::MatrixXf* raster_ptr);
