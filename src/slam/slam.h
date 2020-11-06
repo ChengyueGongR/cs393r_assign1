@@ -68,6 +68,17 @@ class SLAM {
   float prev_odom_angle_;
   bool odom_initialized_;
 
+  
+  float const trans_thres_ = 0.75;
+  float const angle_thres_ = M_PI/6;
+ 
+  float const raster_height_ = 8.5;
+  float const raster_width_ = 5.5; 
+  float const raster_step_ = 0.05;
+  Eigen::MatrixXf raster_matrix_{rows+1, cols+1}; // maintain a matrix and update it 
+ 
+  float const sensor_sigma_ = 0.25; // need to tune
+  
  
 };
 }  // namespace slam
