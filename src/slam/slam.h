@@ -73,19 +73,6 @@ class SLAM {
 
   // Get latest robot pose.
   void GetPose(Eigen::Vector2f* loc, float* angle) const;
- 
-  std::vector<Eigen::Vector2f> GetPointCloud(const std::vector<float>& ranges,
-                                 const float angle_min,
-                                 const float angle_max);
- 
-  void GetRasterMatrix(const std::vector<Eigen::Vector2f>& pc,
-                      const float& step,
-                      const float sensor_noise,
-                      Eigen::MatrixXf* raster_ptr);
-  
-  float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
-                         const float raster_step,
-                         const std::vector<Eigen::Vector2f>& point_cloud);
 
  private:
 
@@ -118,6 +105,19 @@ class SLAM {
   
  
 };
+  
+std::vector<Eigen::Vector2f> GetPointCloud(const std::vector<float>& ranges,
+                                 const float angle_min,
+                                 const float angle_max);
+ 
+void GetRasterMatrix(const std::vector<Eigen::Vector2f>& pc,
+                      const float& step,
+                      const float sensor_noise,
+                      Eigen::MatrixXf* raster_ptr);
+  
+float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
+                      const float raster_step,
+                      const std::vector<Eigen::Vector2f>& point_cloud);
 }  // namespace slam
 
 #endif   // SRC_SLAM_H_
