@@ -62,11 +62,7 @@ namespace slam {
 SLAM::SLAM() :
   prev_odom_loc_(0, 0),
   prev_odom_angle_(0),
-  prev_state_loc_(0, 0),
-  prev_state_angle_(0),
-  state_loc_(0, 0),
-  state_angle_(0),
-  odom_initialized_(false)
+  odom_initialized_(false),
   map_initialized_(false) {
     // Construct voxel cube
     int const loc_samples_ = 10;
