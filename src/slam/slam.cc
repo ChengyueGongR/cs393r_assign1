@@ -72,10 +72,10 @@ SLAM::SLAM() :
     for(auto a=-angle_samples_; a <= angle_samples_; a++) {
       float relative_angle_sample = a*angle_std_dev/angle_samples_;
 
-      for(auto x=-loc_samples_; x <= loc_samples_; x++) {
-        for(auto y = -loc_samples_; y <= loc_samples_; y++) {
-          Vector2f relative_loc_sample( ix*loc_std_dev/loc_samples_,
-                                        iy*loc_std_dev/loc_samples_ );
+      for(int x=-loc_samples_; x <= loc_samples_; x++) {
+        for(int y = -loc_samples_; y <= loc_samples_; y++) {
+          Vector2f relative_loc_sample(x*loc_std_dev/loc_samples_,
+                                       y*loc_std_dev/loc_samples_ );
           
           Voxel p0{relative_loc_sample, relative_angle_sample};
           
@@ -104,7 +104,7 @@ vector<Vector2f> GetPointCloud(const vector<float>& ranges,
   point_cloud.reserve(ranges.size());
 
   float const angle_step = (angle_max - angle_min)/ranges.size();
-  for(int i=0; i<ranges.size(); i++) {
+  for(size_t i=0; i<ranges.size(); i++) {
     float const theta = angle_min + angle_step * i; 
     float x_i, y_i;
     x_i = ranges[i] * cos(theta) + 0.2;
@@ -223,7 +223,7 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   // poses.
   
   // copy from particle filter
-  float delta_loc = odom_loc - prev_odom_loc_;
+  Vector2f delta_loc = odom_loc - prev_odom_loc_;
   float delta_angle = odom_angle - prev_odom_angle_;
     
     // fixed: here it is negative
