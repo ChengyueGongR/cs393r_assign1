@@ -104,7 +104,7 @@ vector<Vector2f> GetPointCloud(const vector<float>& ranges,
   point_cloud.reserve(ranges.size());
 
   float const angle_step = (angle_max - angle_min)/ranges.size();
-  for(auto i=0; i<ranges.size(); i++) {
+  for(int i=0; i<ranges.size(); i++) {
     float const theta = angle_min + angle_step * i; 
     float x_i, y_i;
     x_i = ranges[i] * cos(theta) + 0.2;
