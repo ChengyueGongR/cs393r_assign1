@@ -46,6 +46,12 @@ struct Pose {
   // map or base_link referenced point cloud 
   std::vector<Eigen::Vector2f> point_cloud;
 };
+  
+struct Voxel
+{
+  Eigen::Vector2f delta_loc;
+  float delta_angle;
+};
  
 class SLAM {
  public:
@@ -69,7 +75,7 @@ class SLAM {
   // Get latest robot pose.
   void GetPose(Eigen::Vector2f* loc, float* angle) const;
  
-  vector<Vector2f> GetPointCloud(const vector<float>& ranges,
+  std::vector<Vector2f> GetPointCloud(const vector<float>& ranges,
                                  const float angle_min,
                                  const float angle_max);
  
