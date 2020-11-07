@@ -57,14 +57,34 @@ namespace slam {
 // config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
 SLAM::SLAM() :
-    prev_odom_loc_(0, 0),
-    prev_odom_angle_(0),
-    prev_state_loc_(0, 0),
-    prev_state_angle_(0),
-    state_loc_(0, 0),
-    state_angle_(0),
-    odom_initialized_(false)
-    map_initialized_(false) {}
+  prev_odom_loc_(0, 0),
+  prev_odom_angle_(0),
+  prev_state_loc_(0, 0),
+  prev_state_angle_(0),
+  state_loc_(0, 0),
+  state_angle_(0),
+  odom_initialized_(false)
+  map_initialized_(false) {
+    // Construct voxel cube
+    int const loc_samples_ = 10;
+    float const loc_std_dev = 0.25; 
+    int const angle_samples_ = 20; 
+    float const angle_std_dev = 0.25; 
+    for(auto a=-angle_samples_; a <= angle_samples_; a++) {
+      float relative_angle_sample = a*angle_std_dev/angle_samples_;
+
+      for(auto x=-loc_samples_; x <= loc_samples_; x++) {
+        for(auto y = -loc_samples_; y <= loc_samples_; y++) {
+          Vector2f relative_loc_sample( ix*loc_std_dev/loc_samples_,
+                                        iy*loc_std_dev/loc_samples_ );
+          
+          Voxel p0{relative_loc_sample, relative_angle_sample};
+          
+          voxel_cube_.push_back(p0);
+        }
+      }
+    }
+  }
 
 void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   // Return the latest pose estimate of the robot.
