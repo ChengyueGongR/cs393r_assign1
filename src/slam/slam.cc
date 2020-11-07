@@ -103,17 +103,16 @@ vector<Vector2f> GetPointCloud(const vector<float>& ranges,
                                   const float angle_min,
                                   const float angle_max) {
   // copy from navi and patile_filter
-  float const bias = 0.2;
 
   vector<Vector2f> point_cloud;
-  point_cloud.reserve( ranges.size() );
+  point_cloud.reserve(ranges.size());
 
   float const angle_step = (angle_max - angle_min)/ranges.size();
-  for(auto i=0; i<ranges.size(); i++)
-  {
-    double const theta = angle_min + angle_step * i; 
+  for(auto i=0; i<ranges.size(); i++) {
+    float const theta = angle_min + angle_step * i; 
+    float x_i, y_i;
     x_i = ranges[i] * cos(theta) + 0.2;
-    y_i = ranges[i] * sin(theta_i);
+    y_i = ranges[i] * sin(theta);
 
     point_cloud.push_back(Vector2f(x_i, y_i));
   }
@@ -210,7 +209,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
               map_pose_.back().state_angle + delta_angle, 
               pc};
 
-    map_pose_.push_back(mode);
+    map_pose_.push_back(node);
 
     return;
   }
