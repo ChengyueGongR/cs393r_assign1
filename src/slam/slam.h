@@ -47,8 +47,7 @@ struct Pose {
   std::vector<Eigen::Vector2f> point_cloud;
 };
   
-struct Voxel
-{
+struct Voxel {
   Eigen::Vector2f delta_loc;
   float delta_angle;
 };
