@@ -93,8 +93,8 @@ void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   // Return the latest pose estimate of the robot.
     
   if(map_initialized_ && odom_initialized_) {
-    *loc = state_loc;
-    *angle = state_angle;
+    *loc = state_loc_;
+    *angle = state_angle_;
   }
   return ; 
 }    
