@@ -129,8 +129,8 @@ float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
   // read all point 
   for(auto& p: point_cloud) {
     // Check if the point is within the rasters dimensions
-    if( fabs(p.x()) < raster_step*(raster_matrix.size()-1)/2 &&
-        fabs(p.y()) < raster_step*(raster_matrix[0].size()-1)/2 ) {
+    if( fabs(p.x()) < raster_step*(raster_matrix.rows()-1)/2 &&
+        fabs(p.y()) < raster_step*(raster_matrix.cols()-1)/2 ) {
       i = p.x()/raster_step;
       j = p.y()/raster_step;
 
@@ -254,13 +254,13 @@ void GetRasterMatrix(const vector<Vector2f>& pc,
   MatrixXf& raster_matrix = *raster_ptr;
 
   // loop    
-  for (int i = 0; i < ((int)raster_matrix.size()); i++) {
-    for (int j = 0; j < ((int)raster_matrix[0].size()); j++) {
+  for (int i = 0; i < raster_matrix.rows(); i++) {
+    for (int j = 0; j < raster_matrix.cols(); j++) {
       raster_matrix(i, j) = -10;
       
       // denote that we pass the location info here
       for(const auto& p: pc) {
-        Vector2f temp((i - (int)raster_matrix.size())*step, (j - (int)raster_matrix[0].size())*step);
+        Vector2f temp((i - raster_matrix.rows())*step, (j - raster_matrix.cols())*step);
         float const prob = (-0.5 * (temp-p).norm() * (temp-p).norm() / (sensor_noise * sensor_noise));
         if (prob > raster_matrix(i, j)) {
           raster_matrix(i, j) = prob;
