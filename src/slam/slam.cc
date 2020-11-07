@@ -45,6 +45,9 @@ using Eigen::Vector2f;
 using Eigen::Vector2i;
 using vector_map::VectorMap;
 
+using Eigen::Rotation2Df;
+using Eigen::MatrixXf;
+
 DEFINE_double(num_particles, 50, "Number of particles");
 
 // Fill in the body of these functions and create helpers as needed
@@ -132,7 +135,7 @@ float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
       i = p.x()/raster_step;
       j = p.y()/raster_step;
 
-      likelihood += raster_matrix(i + (raster.rows()-1) / 2, j + (raster.cols()-1) / 2);
+      likelihood += raster_matrix(i + (raster_matrix.rows()-1) / 2, j + (raster_matrix.cols()-1) / 2);
     }
   }
 
@@ -162,7 +165,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
     prev_state_loc_ = state_loc_;
     prev_state_angle_ = state_angle_;
 
-    GetRasterMatrix(p0.point_cloud, raster_step_, sensor_sigma_, &raster_matrix_);
+    GetRasterMatrix(pc0.point_cloud, raster_step_, sensor_sigma_, &raster_matrix_);
     return ; 
   }
   
@@ -194,7 +197,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
         transformed_pc.push_back(delta_loc_ + v.delta_loc + rot*p);
       }
       
-      float const raster_likelihood = RasterWeighting(raster_matrix,
+      float const raster_likelihood = RasterWeighting(raster_matrix_,
                                                       raster_step_,
                                                       transformed_pc);
       if (likelihood < raster_likelihood) { 
@@ -204,8 +207,8 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
       }
     }
     Pose node{map_pose_.back().state_loc + delta_loc, 
-              map_pose_scan_.back().state_angle + delta_angle, 
-              loc};
+              map_pose_.back().state_angle + delta_angle, 
+              pc};
 
     map_pose_.push_back(mode);
 
