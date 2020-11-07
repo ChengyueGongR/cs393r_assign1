@@ -74,7 +74,7 @@ class SLAM {
   // Get latest robot pose.
   void GetPose(Eigen::Vector2f* loc, float* angle) const;
  
-  std::vector<Eigen::Vector2f> GetPointCloud(const vector<float>& ranges,
+  std::vector<Eigen::Vector2f> GetPointCloud(const std::vector<float>& ranges,,
                                  const float angle_min,
                                  const float angle_max);
  
