@@ -94,6 +94,13 @@ class SLAM {
   float prev_odom_angle_;
   bool odom_initialized_;
   
+  // init
+  Eigen::Vector2f prev_state_loc_;
+  float prev_state_angle_;
+  Eigen::Vector2f state_loc_;
+  float state_angle_;
+  bool map_initialized_;
+  
   std::vector<Pose> map_pose_;
  
   float const trans_thres_ = 0.75;
