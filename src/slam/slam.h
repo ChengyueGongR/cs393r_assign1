@@ -113,6 +113,8 @@ class SLAM {
  
   float const sensor_sigma_ = 0.25; // need to tune
   
+  std::vector<Voxel> voxel_cube_;
+  
  
 };
 }  // namespace slam
