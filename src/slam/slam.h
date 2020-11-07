@@ -109,7 +109,8 @@ class SLAM {
   float const raster_height_ = 8.5;
   float const raster_width_ = 5.5; 
   float const raster_step_ = 0.05;
-  Eigen::MatrixXf raster_matrix_{raster_height_+1, raster_width_+1}; // maintain a matrix and update it 
+  
+  Eigen::MatrixXf raster_matrix_{int(2*raster_height_/raster_step_)+1, int(2*raster_width_/raster_step_)+1}; // maintain a matrix and update it 
  
   float const sensor_sigma_ = 0.25; // need to tune
   
