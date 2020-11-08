@@ -73,9 +73,6 @@ class SLAM {
 
   // Get latest robot pose.
   void GetPose(Eigen::Vector2f* loc, float* angle) const;
-  // Get latest point_cloud from map_pose_scan.
-  void GetCloud (std::vector<Eigen::Vector2f>* point_cloud) const;
-  void GetRaster(float* raster_step, Eigen::MatrixXf* raster_matrix);
 
  private:
 
