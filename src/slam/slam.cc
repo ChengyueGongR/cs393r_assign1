@@ -279,7 +279,7 @@ vector<Vector2f> SLAM::GetMap() {
     vector<Vector2f> transformed_pc;
     transformed_pc.reserve(mp.point_cloud.size());
     const Rotation2Df rot(mp.state_angle);
-    for(auto& p: pc) {
+    for(auto& p: mp.point_cloud) {
       transformed_pc.push_back(mp.state_loc + rot*p);
      }
 
