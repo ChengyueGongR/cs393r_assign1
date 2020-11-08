@@ -115,27 +115,7 @@ vector<Vector2f> GetPointCloud(const vector<float>& ranges,
   
   return point_cloud;
 }
-    
-float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
-                         const float raster_step,
-                         const std::vector<Eigen::Vector2f>& point_cloud) {
-  float likelihood = 0;
-  int i, j; // index
-
-  // read all point 
-  for(auto& p: point_cloud) {
-    // Check if the point is within the rasters dimensions
-    if( fabs(p.x()) < raster_step*(raster_matrix.rows()-1)/2 &&
-        fabs(p.y()) < raster_step*(raster_matrix.cols()-1)/2 ) {
-      i = p.x()/raster_step;
-      j = p.y()/raster_step;
-
-      likelihood += raster_matrix(i + (raster_matrix.rows()-1) / 2, j + (raster_matrix.cols()-1) / 2);
-    }
-  }
-
-  return likelihood;
-}
+   
 
 void SLAM::ObserveLaser(const vector<float>& ranges,
                         float range_min,
@@ -166,7 +146,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
   
   if (odom_initialized_ && map_initialized_ && 
       ((prev_state_loc_ - state_loc_).norm() > trans_thres_ ||
-      abs(prev_state_angle_ - state_angle_) > angle_thres_)) {
+      fabs(prev_state_angle_ - state_angle_) > angle_thres_)) {
       
     GetRasterMatrix(map_pose_.back().point_cloud, raster_step_, sensor_sigma_, &raster_matrix_);
     vector<Vector2f> pc = GetPointCloud(ranges, angle_min, angle_max);
@@ -242,6 +222,27 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   return;
 }
 
+float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
+                         const float raster_step,
+                         const std::vector<Eigen::Vector2f>& point_cloud) {
+  float likelihood = 0;
+  int i, j; // index
+
+  // read all point 
+  for(auto& p: point_cloud) {
+    // Check if the point is within the rasters dimensions
+    if(fabs(p.x()) < raster_step*(raster_matrix.rows()-1)/2 &&
+       fabs(p.y()) < raster_step*(raster_matrix.cols()-1)/2) {
+      i = p.x()/raster_step;
+      j = p.y()/raster_step;
+
+      likelihood += raster_matrix(i + (raster_matrix.rows()-1) / 2, j + (raster_matrix.cols()-1) / 2);
+    }
+  }
+
+  return likelihood;
+}
+  
 void GetRasterMatrix(const vector<Vector2f>& pc,
                      const float& step,
                      const float sensor_noise,
