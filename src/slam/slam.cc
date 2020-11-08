@@ -283,9 +283,9 @@ vector<Vector2f> SLAM::GetMap() {
       transformed_pc.push_back(mp.state_loc + rot*p);
      }
         
-      for(const auto& p: transformed_pc) {
-        map.push_back(p);
-      }
+    for(const auto& p: transformed_pc) {
+      map.push_back(p);
+    }
   }
   return map;
 }
