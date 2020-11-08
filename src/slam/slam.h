@@ -47,7 +47,7 @@ struct Pose {
   std::vector<Eigen::Vector2f> point_cloud;
 };
   
-struct Voxel {
+struct DeltaS {
   Eigen::Vector2f delta_loc;
   float delta_angle;
 };
@@ -73,6 +73,9 @@ class SLAM {
 
   // Get latest robot pose.
   void GetPose(Eigen::Vector2f* loc, float* angle) const;
+  // Get latest point_cloud from map_pose_scan.
+  void GetCloud (std::vector<Eigen::Vector2f>* point_cloud) const;
+  void GetRaster(float* raster_step, Eigen::MatrixXf* raster_matrix);
 
  private:
 
@@ -101,9 +104,8 @@ class SLAM {
  
   float const sensor_sigma_ = 0.25; // need to tune
   
-  std::vector<Voxel> voxel_cube_;
+  std::vector<DeltaS> delta_s_;
   
- 
 };
   
 std::vector<Eigen::Vector2f> GetPointCloud(const std::vector<float>& ranges,
