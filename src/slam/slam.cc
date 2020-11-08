@@ -64,7 +64,6 @@ SLAM::SLAM() :
   prev_odom_angle_(0),
   odom_initialized_(false),
   map_initialized_(false) {
-    // Construct voxel cube
     int const loc_samples_ = 10;
     float const loc_std_dev = 0.25; 
     int const angle_samples_ = 20; 
@@ -77,9 +76,9 @@ SLAM::SLAM() :
           Vector2f relative_loc_sample(x*loc_std_dev/loc_samples_,
                                        y*loc_std_dev/loc_samples_ );
           
-          Voxel p0{relative_loc_sample, relative_angle_sample};
+          DeltaS p0{relative_loc_sample, relative_angle_sample};
           
-          voxel_cube_.push_back(p0);
+          delta_s_.push_back(p0);
         }
       }
     }
@@ -196,14 +195,14 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
     float delta_angle = 0;
     float likelihood = -100;
 
-    for(const auto& v: voxel_cube_) {
+    for(const auto& d: delta_s_) {
       // fixing ... 
       // first: transform point cloud
       vector<Vector2f> transformed_pc;
       transformed_pc.reserve(pc.size());
-      const Rotation2Df rot(delta_angle_ + v.delta_angle);
+      const Rotation2Df rot(delta_angle_ + d.delta_angle);
       for(auto& p: pc) {
-        transformed_pc.push_back(delta_loc_ + v.delta_loc + rot*p);
+        transformed_pc.push_back(delta_loc_ + d.delta_loc + rot*p);
       }
       
       float const raster_likelihood = RasterWeighting(raster_matrix_,
@@ -211,8 +210,8 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
                                                       transformed_pc);
       if (likelihood < raster_likelihood) { 
         likelihood = raster_likelihood;
-        delta_loc = delta_loc_ + v.delta_loc;
-        delta_angle = delta_angle_ + v.delta_angle;
+        delta_loc = delta_loc_ + d.delta_loc;
+        delta_angle = delta_angle_ + d.delta_angle;
       }
     }
     Pose node{map_pose_.back().state_loc + delta_loc, 
