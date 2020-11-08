@@ -206,7 +206,6 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   float delta_angle = odom_angle - prev_odom_angle_;
   delta_angle = std::min(abs(delta_angle), float(2*M_PI)-abs(delta_angle));
   
-  // fixed: here it is negative
   const Rotation2Df bl_rotation(-prev_odom_angle_);   
   // transform
   Vector2f delta_T_bl = bl_rotation * delta_loc;  
