@@ -94,19 +94,6 @@ void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   }
   return ; 
 }    
-
-void SLAM::GetCloud (vector<Vector2f>* point_cloud) const {
-  if(map_initialized_ && odom_initialized_) {
-    *point_cloud = map_pose_scan_.back().point_cloud;
-  }
-  return;
-}
-
-void SLAM::GetRaster(float* raster_step, MatrixXf* raster_matrix) {
-  *raster_step = raster_step_;
-  *raster_matrix = raster_matrix_;             
-  return;
-}
   
 vector<Vector2f> GetPointCloud(const vector<float>& ranges,
                                   const float angle_min,
