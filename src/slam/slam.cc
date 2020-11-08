@@ -225,17 +225,12 @@ float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
                          const float raster_step,
                          const std::vector<Eigen::Vector2f>& point_cloud) {
   float likelihood = 0;
-  int i, j; // index
-
   // read all point 
   for(auto& p: point_cloud) {
     // Check if the point is within the rasters dimensions
     if(fabs(p.x()) < raster_step*(raster_matrix.rows()-1)/2 &&
        fabs(p.y()) < raster_step*(raster_matrix.cols()-1)/2) {
-      i = p.x()/raster_step;
-      j = p.y()/raster_step;
-
-      likelihood += raster_matrix(i + (raster_matrix.rows()-1) / 2, j + (raster_matrix.cols()-1) / 2);
+      likelihood += raster_matrix( floor(p.x()/raster_step)  + (raster_matrix.rows()-1) / 2, floor(p.y()/raster_step) + (raster_matrix.cols()-1) / 2);
     }
   }
 
@@ -252,7 +247,7 @@ void GetRasterMatrix(const vector<Vector2f>& pc,
   // loop    
   for (int i = 0; i < raster_matrix.rows(); i++) {
     for (int j = 0; j < raster_matrix.cols(); j++) {
-      raster_matrix(i, j) = -10000000000;
+      raster_matrix(i, j) = -100;
       
       // denote that we pass the location info here
       for(const auto& p: pc) {
