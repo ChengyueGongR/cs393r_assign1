@@ -91,7 +91,7 @@ class SLAM {
   std::vector<Pose> map_pose_;
  
   float const trans_thres_ = 0.75;
-  float const angle_thres_ = M_PI/1.3;
+  float const angle_thres_ = M_PI/12;
  
   float const raster_height_ = 8.5;
   float const raster_width_ = 5.5; 
