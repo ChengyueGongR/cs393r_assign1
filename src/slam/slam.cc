@@ -172,10 +172,20 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
         transformed_pc.push_back(delta_loc_ + d.delta_loc + rot*p);
       }
       
-      float const raster_likelihood = RasterWeighting(raster_matrix_,
-                                                      raster_step_, transformed_pc);
-      if (likelihood < raster_likelihood) { 
-        likelihood = raster_likelihood;
+      
+      // re-weight
+      float constrast_likelihood = 0;
+      // read all point 
+      for(auto& p: transformed_pc) {
+        // Check if the point is within the rasters dimensions
+        if(fabs(p.x()) < raster_step_*(raster_matrix_.rows()-1)/2 &&
+           fabs(p.y()) < raster_step_*(raster_matrix_.cols()-1)/2) {
+          constrast_likelihood += raster_matrix_(floor(p.x()/raster_step_)  + (raster_matrix_.rows()-1) / 2, floor(p.y()/raster_step_) + (raster_matrix_.cols()-1) / 2);
+        }
+      }
+
+      if (likelihood < constrast_likelihood) { 
+        likelihood = constrast_likelihood;
         delta_loc = delta_loc_ + d.delta_loc;
         delta_angle = delta_angle_ + d.delta_angle;
       }
@@ -219,22 +229,6 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   prev_odom_angle_ = odom_angle;
 
   return;
-}
-
-float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
-                         const float raster_step,
-                         const std::vector<Eigen::Vector2f>& point_cloud) {
-  float likelihood = 0;
-  // read all point 
-  for(auto& p: point_cloud) {
-    // Check if the point is within the rasters dimensions
-    if(fabs(p.x()) < raster_step*(raster_matrix.rows()-1)/2 &&
-       fabs(p.y()) < raster_step*(raster_matrix.cols()-1)/2) {
-      likelihood += raster_matrix( floor(p.x()/raster_step)  + (raster_matrix.rows()-1) / 2, floor(p.y()/raster_step) + (raster_matrix.cols()-1) / 2);
-    }
-  }
-
-  return likelihood;
 }
   
 void GetRasterMatrix(const vector<Vector2f>& pc,
