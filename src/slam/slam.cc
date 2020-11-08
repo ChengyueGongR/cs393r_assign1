@@ -64,7 +64,7 @@ SLAM::SLAM() :
   prev_odom_angle_(0),
   odom_initialized_(false),
   map_initialized_(false) {
-    int const loc_samples_ = 10;
+    /*int const loc_samples_ = 10;
     float const loc_std_dev = 0.25; 
     int const angle_samples_ = 10; 
     float const angle_std_dev = 0.25; 
@@ -81,7 +81,7 @@ SLAM::SLAM() :
           delta_s_.push_back(p0);
         }
       }
-    }
+    }*/
   }
 
 // used in slam_main, to input data
