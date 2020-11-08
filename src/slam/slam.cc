@@ -160,7 +160,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
     
     Vector2f delta_loc(0, 0);
     float delta_angle = 0;
-    float likelihood = -100;
+    float likelihood = -10000000000000;
 
     for(const auto& d: delta_s_) {
       // fixing ... 
@@ -253,7 +253,7 @@ void GetRasterMatrix(const vector<Vector2f>& pc,
   // loop    
   for (int i = 0; i < raster_matrix.rows(); i++) {
     for (int j = 0; j < raster_matrix.cols(); j++) {
-      raster_matrix(i, j) = -10;
+      raster_matrix(i, j) = -10000000000;
       
       // denote that we pass the location info here
       for(const auto& p: pc) {
