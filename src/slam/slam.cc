@@ -163,18 +163,17 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
     float likelihood = -10000000000000;
 
     for(const auto& d: delta_s_) {
-//       // fixing ... 
-//       // first: transform point cloud
-//       vector<Vector2f> transformed_pc;
-//       transformed_pc.reserve(pc.size());
-//       const Rotation2Df rot(delta_angle_ + d.delta_angle);
-//       for(auto& p: pc) {
-//         transformed_pc.push_back(delta_loc_ + d.delta_loc + rot*p);
-//       }
+      // fixing ... 
+      // first: transform point cloud
+      vector<Vector2f> transformed_pc;
+      transformed_pc.reserve(pc.size());
+      const Rotation2Df rot(delta_angle_ + d.delta_angle);
+      for(auto& p: pc) {
+        transformed_pc.push_back(delta_loc_ + d.delta_loc + rot*p);
+      }
       
       float const raster_likelihood = RasterWeighting(raster_matrix_,
-                                                      raster_step_, TransformPointCloud(pc, delta_loc_ + d.delta_loc, delta_angle_ + d.delta_angle));
-//                                                       transformed_pc);
+                                                      raster_step_, transformed_pc);
       if (likelihood < raster_likelihood) { 
         likelihood = raster_likelihood;
         delta_loc = delta_loc_ + d.delta_loc;
@@ -274,48 +273,21 @@ vector<Vector2f> SLAM::GetMap() {
   vector<Vector2f> map;
   // Reconstruct the map as a single aligned point cloud from all saved poses
   // and their respective scans.
-  for(const auto& mps: map_pose_)
-  {
-     vector<Vector2f> temp = TransformPointCloud( mps.point_cloud,
-                                                  mps.state_loc,
-                                                  mps.state_angle );
-    for(const auto& p: temp)
-    {
-      map.push_back(p);
-    }
-  }                         
-  return map;
-//   for(const auto& mp: map_pose_) {
+
+  for(const auto& mp: map_pose_) {
     
-//     vector<Vector2f> transformed_pc;
-//     transformed_pc.reserve(mp.point_cloud.size());
-//     const Rotation2Df rot(mp.state_angle);
-//     for(auto& p: mp.point_cloud) {
-//       transformed_pc.push_back(mp.state_loc + rot*p);
-//      }
+    vector<Vector2f> transformed_pc;
+    transformed_pc.reserve(mp.point_cloud.size());
+    const Rotation2Df rot(mp.state_angle);
+    for(auto& p: mp.point_cloud) {
+      transformed_pc.push_back(mp.state_loc + rot*p);
+     }
         
-//       for(const auto& p: transformed_pc) {
-//         map.push_back(p);
-//       }
-//   }
-//   return map;
-}
-
-vector<Vector2f> TransformPointCloud( const vector<Vector2f>& in,
-                                      const Vector2f translation,
-                                      const float rotation )
-{
-  vector<Vector2f> out;
-  out.reserve( in.size() );
-
-  const Rotation2Df rot( rotation );
-
-  for(auto& p: in)
-  {
-    out.push_back( translation + rot*p ); // This should not be rot*( translation + p ) FML
+      for(const auto& p: transformed_pc) {
+        map.push_back(p);
+      }
   }
-
-  return out;
+  return map;
 }
   
 }  // namespace slam
