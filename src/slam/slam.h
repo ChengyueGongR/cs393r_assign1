@@ -114,9 +114,6 @@ void GetRasterMatrix(const std::vector<Eigen::Vector2f>& pc,
                       const float sensor_noise,
                       Eigen::MatrixXf* raster_ptr);
 
-float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
-                      const float raster_step,
-                      const std::vector<Eigen::Vector2f>& point_cloud);
 }  // namespace slam
 
 #endif   // SRC_SLAM_H_
