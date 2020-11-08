@@ -274,6 +274,19 @@ vector<Vector2f> SLAM::GetMap() {
   vector<Vector2f> map;
   // Reconstruct the map as a single aligned point cloud from all saved poses
   // and their respective scans.
+  for(const auto& mp: map_pose_) {
+    
+    vector<Vector2f> transformed_pc;
+    transformed_pc.reserve(mp.point_cloud.size());
+    const Rotation2Df rot(mp.state_angle);
+    for(auto& p: pc) {
+      transformed_pc.push_back(mp.state_loc + rot*p);
+     }
+
+    for(const auto& p: transformed_pc) {
+      map.push_back(p);
+    }
+  }
   return map;
 }
 
