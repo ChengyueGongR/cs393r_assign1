@@ -89,7 +89,7 @@ void InitializeMsgs() {
 
 void PublishMap() {
   static double t_last = 0;
-  if (GetMonotonicTime() - t_last < 0.5) {
+  if (GetMonotonicTime() - t_last < 0.25) {
     // Rate-limit visualization.
     return;
   }
