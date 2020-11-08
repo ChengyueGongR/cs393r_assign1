@@ -66,7 +66,7 @@ SLAM::SLAM() :
   map_initialized_(false) {
     int const loc_samples_ = 10;
     float const loc_std_dev = 0.25; 
-    int const angle_samples_ = 20; 
+    int const angle_samples_ = 10; 
     float const angle_std_dev = 0.25; 
     for(auto a=-angle_samples_; a <= angle_samples_; a++) {
       float relative_angle_sample = a*angle_std_dev/angle_samples_;
