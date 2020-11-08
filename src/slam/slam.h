@@ -114,6 +114,10 @@ void GetRasterMatrix(const std::vector<Eigen::Vector2f>& pc,
                       const float sensor_noise,
                       Eigen::MatrixXf* raster_ptr);
   
+std::vector<Eigen::Vector2f> TransformPointCloud( const std::vector<Eigen::Vector2f>& in,
+                                                  const Eigen::Vector2f translation,
+                                                  const float rotation );
+  
 float RasterWeighting(const Eigen::MatrixXf& raster_matrix,
                       const float raster_step,
                       const std::vector<Eigen::Vector2f>& point_cloud);
