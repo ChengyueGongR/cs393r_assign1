@@ -173,7 +173,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
 //       }
       
       float const raster_likelihood = RasterWeighting(raster_matrix_,
-                                                      raster_step_, TransformPointCloud(pc, delta_loc_ + d.delta_loc, delta_angle_ + d.delta_angle);
+                                                      raster_step_, TransformPointCloud(pc, delta_loc_ + d.delta_loc, delta_angle_ + d.delta_angle));
 //                                                       transformed_pc);
       if (likelihood < raster_likelihood) { 
         likelihood = raster_likelihood;
